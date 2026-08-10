@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}PlacementLog — Home{% endblock %}
+{% block content %}
+
+<div class="hero">
+    <h1>Placement Season Tracker</h1>
+    {% if days_left > 0 %}
+        <p>Season starts {{ season_start.strftime('%d %b %Y') }}</p>
+        <div class="countdown">{{ days_left }} day{{ 's' if days_left != 1 }} to go</div>
+    {% elif days_left == 0 %}
+        <p>The season starts today. Good luck!</p>
+    {% else %}
+        <p>Season started {{ season_start.strftime('%d %b %Y') }}</p>
+        <div class="countdown">Day {{ -days_left }} of the season</div>
+    {% endif %}
+</div>
+
+<div class="card-grid">
+    <div class="stat-card accent">
+        <div class="stat-value">{{ total_apps }}</div>
+        <div class="stat-label">Total Applications</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ active }}</div>
+        <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-value">{{ offers }}</div>
+        <div class="stat-label">Offers</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_companies }}</div>
+        <div class="stat-label">Companies Tracked</div>
+    </div>
+</div>
+
+<h2>Recent Applications</h2>
+{% if recent_applications %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Status</th>
+                    <th>Date Applied</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in recent_applications %}
+                    <tr onclick="window.location='{{ url_for('applications.application_detail', id=application.id) }}'" style="cursor:pointer;">
+                        <td>{{ application.company.name }}</td>
+                        <td>
+                            {% set s = application.current_status %}
+                            <span class="badge {{ 'badge-success' if s == 'Offer' else 'badge-danger' if s == 'Reject' else 'badge-info' }}">{{ s }}</span>
+                        </td>
+                        <td>{{ application.date_applied.strftime('%d %b %Y') if application.date_applied }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No applications logged yet.</p>
+        <p><a href="{{ url_for('companies.add_company') }}">Add a company</a> and then <a href="{{ url_for('applications.add_application') }}">log your first application</a>.</p>
+    </div>
+{% endif %}
+
+<div class="form-actions">
+    <a class="btn" href="{{ url_for('applications.add_application') }}">+ Log Application</a>
+    <a class="btn btn-secondary" href="{{ url_for('main.dashboard') }}">View Dashboard</a>
+</div>
+
+{% endblock %}

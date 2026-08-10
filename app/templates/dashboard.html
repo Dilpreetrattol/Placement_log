@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — PlacementLog{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="page-subtitle">Insights across all your applications and interview rounds.</p>
+    </div>
+</div>
+
+{% if not has_data %}
+    <div class="empty-state">
+        <p>No applications yet, so there's nothing to chart.</p>
+        <p><a href="{{ url_for('applications.add_application') }}">Log your first application</a> to see insights here.</p>
+    </div>
+{% else %}
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h3>Applications by Status</h3>
+            <div style="height: 260px;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Applications by Company Tier</h3>
+            <div style="height: 260px;">
+                <canvas id="tierChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Round Outcomes</h3>
+            <div style="height: 260px;">
+                <canvas id="outcomeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Avg. Performance Rating by Round</h3>
+            <div style="height: 260px;">
+                <canvas id="ratingChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card" style="grid-column: 1 / -1;">
+            <h3>Most Frequently Asked Topics</h3>
+            <div style="height: 320px;">
+                <canvas id="topicChart"></canvas>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+    renderBarChart('statusChart', {{ status_labels | tojson }}, {{ status_values | tojson }});
+    renderBarChart('tierChart', {{ tier_labels | tojson }}, {{ tier_values | tojson }});
+    renderStatusOutcomeChart('outcomeChart', {{ outcome_labels | tojson }}, {{ outcome_values | tojson }});
+    renderBarChart('ratingChart', {{ rating_labels | tojson }}, {{ rating_values | tojson }});
+    renderBarChart('topicChart', {{ topic_labels | tojson }}, {{ topic_values | tojson }}, { horizontal: true });
+</script>
+{% endblock %}

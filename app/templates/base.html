@@ -9,11 +9,11 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="{{ url_for('main.index') }}" class="nav-brand">PlacementLog</a>
+        <a href="{{ url_for('main.index') }}" class="nav-brand">📋 PlacementLog</a>
         <div class="nav-links">
-            <a href="{{ url_for('companies.list_companies') }}">Companies</a>
-            <a href="{{ url_for('applications.list_applications') }}">Applications</a>
-            <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('companies.list_companies') }}" class="{{ 'active' if request.blueprint == 'companies' }}">Companies</a>
+            <a href="{{ url_for('applications.list_applications') }}" class="{{ 'active' if request.blueprint == 'applications' }}">Applications</a>
+            <a href="{{ url_for('main.dashboard') }}" class="{{ 'active' if request.endpoint == 'main.dashboard' }}">Dashboard</a>
             <a href="{{ url_for('export.export_csv') }}">Export CSV</a>
         </div>
     </nav>
@@ -29,5 +29,7 @@
 
         {% block content %}{% endblock %}
     </main>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>
