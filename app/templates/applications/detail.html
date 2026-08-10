@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Application Detail</h1>
+
+<div>
+    <p><strong>Company:</strong> {{ application.company.name }}</p>
+    <p><strong>Status:</strong> {{ application.current_status }}</p>
+    <p><strong>Date Applied:</strong> {{ application.date_applied }}</p>
+    <p><strong>Why I want this:</strong></p>
+    <p>{{ application.why_i_want_this }}</p>
+    <p><strong>Notes:</strong></p>
+    <p>{{ application.notes or 'No notes' }}</p>
+</div>
+
+<hr>
+
+<h2>Rounds</h2>
+<a href="{{ url_for('rounds.add_round', application_id=application.id) }}">Add New Round</a>
+
+{% if application.rounds %}
+    <ul>
+        {% for round in application.rounds %}
+            <li>
+                <strong>{{ round.round_type }}</strong> — {{ round.outcome }}
+                {% if round.round_date %} — {{ round.round_date }}{% endif %}
+                {% if round.performance_rating %} — Rating: {{ round.performance_rating }}{% endif %}
+                {% if round.topics_asked %} — Topics: {{ round.topics_asked }}{% endif %}
+                <form action="{{ url_for('rounds.delete_round', id=round.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No rounds added yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Applications</h1>
+    <h2>
+        <a href="{{ url_for('applications.add_application') }}">Add Application</a>
+    </h2>
+
+    {% for application in applications %}
+        <div class="application-item">
+            <a href="{{ url_for('applications.application_detail', id=application.id) }}">
+                <p><strong>Company:</strong> {{ application.company.name }}</p>
+            </a>
+            <p><strong>Company ID:</strong> {{ application.company.id }}</p>
+            <p><strong>Date Applied:</strong> {{ application.date_applied }}</p>
+            <p><strong>Status:</strong> {{ application.current_status }}</p>
+            <p><strong>Why I want this:</strong> {{ application.why_i_want_this }}</p>
+            <p><strong>Notes:</strong> {{ application.notes or 'No notes' }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}

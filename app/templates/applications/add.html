@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add Application</h1>
+<form action="{{ url_for('applications.add_application') }}" method="POST">
+    <label>Company</label>
+    <select name="company_id" required>
+        {% for company in companies %}
+            <option value="{{ company.id }}">{{ company.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Date Applied</label>
+    <input type="date" name="date_applied" required>
+
+    <label>Status</label>
+    <select name="current_status">
+        <option value="Applied">Applied</option>
+        <option value="Shortlisted">Shortlisted</option>
+        <option value="OA">OA</option>
+        <option value="OA Result">OA Result</option>
+        <option value="TR1">TR1</option>
+        <option value="TR2">TR2</option>
+        <option value="HR">HR</option>
+        <option value="Offer">Offer</option>
+        <option value="Reject">Reject</option>
+    </select>
+
+    <label>Why I want this</label>
+    <textarea name="why_i_want_this" required></textarea>
+
+    <label>Notes</label>
+    <textarea name="notes"></textarea>
+
+    <button type="submit">Add Application</button>
+</form>
+{% endblock %}

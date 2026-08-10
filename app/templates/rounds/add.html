@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add Round</h1>
+<form action="{{ url_for('rounds.add_round', application_id=application.id) }}" method="POST">
+    <label>Round Type</label>
+    <select name="round_type" required>
+        <option value="OA">OA</option>
+        <option value="TR1">TR1</option>
+        <option value="TR2">TR2</option>
+        <option value="HR">HR</option>
+    </select>
+
+    <label>Round Date</label>
+    <input type="date" name="round_date">
+
+    <label>Performance Rating</label>
+    <input type="number" name="performance_rating" min="1" max="5">
+
+    <label>Topics Asked</label>
+    <textarea name="topics_asked"></textarea>
+
+    <label>Outcome</label>
+    <select name="outcome" required>
+        <option value="Passed">Passed</option>
+        <option value="Failed">Failed</option>
+        <option value="Pending">Pending</option>
+    </select>
+
+    <button type="submit">Add Round</button>
+</form>
+{% endblock %}

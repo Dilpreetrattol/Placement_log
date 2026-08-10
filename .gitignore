@@ -1,0 +1,13 @@
+instance/
+.env
+__pycache__/
+*.pyc
+*.db
+.DS_Store
+venv/
+.venv/
+.pytest_cache/
+*.egg-info/
+.vscode/
+.idea/
+.claude/

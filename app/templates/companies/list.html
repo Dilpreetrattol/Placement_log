@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h1>Companies
+    </h1>
+    <h2>
+        <a href="{{ url_for('companies.add_company') }}">Add Company</a>
+    </h2>
+        {% for company in companies %}
+            <p>name: <a href="{{ url_for('companies.company_detail', id=company.id) }}">{{ company.name }}</a>
+            </p>
+            <p>tier: {{company.tier}}</p>
+            <p>ctc_max: {{company.ctc_max}}</p>
+            <p>cgpa_cutoff: {{company.cgpa_cutoff}}</p>
+            {% endfor %}
+{% endblock %}
