@@ -23,7 +23,7 @@ def add_application():
         )
         db.session.add(application)
         db.session.commit()
-        company = Company.query.get(application.company_id)
+        company = db.session.get(Company, application.company_id)
         flash(f'Application for {company.name} added successfully.', 'success')
         return redirect(url_for('applications.list_applications'))
     return render_template('applications/form.html', companies=Company.query.order_by(Company.name).all(),
@@ -54,6 +54,6 @@ def delete_application(id):
     application = Application.query.get_or_404(id)
     db.session.delete(application)
     db.session.commit()
-    company = Company.query.get(application.company_id)
+    company = db.session.get(Company, application.company_id)
     flash(f'Application for {company.name} deleted.', 'info')
     return redirect(url_for('applications.list_applications'))

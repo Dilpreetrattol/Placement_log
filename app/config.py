@@ -18,8 +18,15 @@ class ProductionConfig(Config):
         'postgres://', 'postgresql://'  # Render gives postgres://, SQLAlchemy needs postgresql://
     )
 
+class TestingConfig(Config):
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    PLACEMENT_SEASON_START = '2025-08-01'
+
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
+    'testing': TestingConfig,
     'default': DevelopmentConfig
 }
