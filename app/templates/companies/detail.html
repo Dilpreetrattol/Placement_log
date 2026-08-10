@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ company.name }} — PlacementLog{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>{{ company.name }}</h1>
+        <span class="badge badge-neutral">{{ company.tier }}</span>
+        {% if company.mode %}<span class="badge badge-info">{{ company.mode }}</span>{% endif %}
+    </div>
+    <div class="actions-cell">
+        <a class="btn btn-secondary" href="{{ url_for('companies.edit_company', id=company.id) }}">Edit</a>
+        <form class="inline-form" action="{{ url_for('companies.delete_company', id=company.id) }}" method="POST" onsubmit="return confirm('Delete {{ company.name }} and all its applications?');">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label">CTC Range</div>
+            <div class="value">{{ company.ctc_min or 0 }}–{{ company.ctc_max or 0 }} LPA</div>
+        </div>
+        <div class="detail-item">
+            <div class="label">CGPA Cutoff</div>
+            <div class="value">{{ company.cgpa_cutoff or '—' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label">Bond</div>
+            <div class="value">{{ company.bond_years or 0 }} year{{ 's' if company.bond_years != 1 }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label">Website</div>
+            <div class="value">
+                {% if company.website %}
+                    <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">{{ company.website }}</a>
+                {% else %}—{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>Applications ({{ company.applications | length }})</h2>
+{% if company.applications %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date Applied</th>
+                    <th>Status</th>
+                    <th>Rounds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in company.applications %}
+                    <tr onclick="window.location='{{ url_for('applications.application_detail', id=application.id) }}'" style="cursor:pointer;">
+                        <td>{{ application.date_applied.strftime('%d %b %Y') if application.date_applied }}</td>
+                        <td>
+                            {% set s = application.current_status %}
+                            <span class="badge {{ 'badge-success' if s == 'Offer' else 'badge-danger' if s == 'Reject' else 'badge-info' }}">{{ s }}</span>
+                        </td>
+                        <td>{{ application.rounds | length }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No applications logged for {{ company.name }} yet.</p>
+        <p><a href="{{ url_for('applications.add_application') }}">Log an application</a>.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if company else 'Add' }} Company — PlacementLog{% endblock %}
+{% block content %}
+
+<h1>{{ 'Edit' if company else 'Add' }} Company</h1>
+
+<form action="{{ url_for('companies.edit_company', id=company.id) if company else url_for('companies.add_company') }}" method="POST">
+    <label>Company Name</label>
+    <input type="text" name="name" value="{{ company.name if company else '' }}" required>
+
+    <label>Tier</label>
+    <select name="tier" required>
+        {% for tier in tiers %}
+            <option value="{{ tier }}" {{ 'selected' if company and company.tier == tier }}>{{ tier }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="form-row">
+        <div>
+            <label>CTC Min (LPA)</label>
+            <input type="number" step="0.1" name="ctc_min" value="{{ company.ctc_min if company else '' }}">
+        </div>
+        <div>
+            <label>CTC Max (LPA)</label>
+            <input type="number" step="0.1" name="ctc_max" value="{{ company.ctc_max if company else '' }}">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div>
+            <label>CGPA Cutoff</label>
+            <input type="number" step="0.01" name="cgpa_cutoff" value="{{ company.cgpa_cutoff if company else '' }}">
+        </div>
+        <div>
+            <label>Bond (years)</label>
+            <input type="number" name="bond_years" value="{{ company.bond_years if company else 0 }}">
+        </div>
+    </div>
+
+    <label>Mode</label>
+    <select name="mode">
+        <option value="on-campus" {{ 'selected' if company and company.mode == 'on-campus' }}>On-campus</option>
+        <option value="off-campus" {{ 'selected' if company and company.mode == 'off-campus' }}>Off-campus</option>
+    </select>
+
+    <label>Website</label>
+    <input type="url" name="website" placeholder="https://…" value="{{ company.website if company else '' }}">
+
+    <div class="form-actions">
+        <button type="submit" class="btn">{{ 'Save Changes' if company else 'Add Company' }}</button>
+        <a class="btn btn-secondary" href="{{ url_for('companies.company_detail', id=company.id) if company else url_for('companies.list_companies') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

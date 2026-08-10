@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if application else 'Add' }} Application — PlacementLog{% endblock %}
+{% block content %}
+
+<h1>{{ 'Edit' if application else 'Add' }} Application</h1>
+
+<form action="{{ url_for('applications.edit_application', id=application.id) if application else url_for('applications.add_application') }}" method="POST">
+    <label>Company</label>
+    <select name="company_id" required>
+        {% for company in companies %}
+            <option value="{{ company.id }}" {{ 'selected' if application and application.company_id == company.id }}>{{ company.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Date Applied</label>
+    <input type="date" name="date_applied" value="{{ application.date_applied.isoformat() if application and application.date_applied else '' }}" required>
+
+    <label>Status</label>
+    <select name="current_status">
+        {% for status in statuses %}
+            <option value="{{ status }}" {{ 'selected' if application and application.current_status == status }}>{{ status }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Why I want this</label>
+    <textarea name="why_i_want_this" required>{{ application.why_i_want_this if application else '' }}</textarea>
+
+    <label>Notes</label>
+    <textarea name="notes">{{ application.notes if application else '' }}</textarea>
+
+    <div class="form-actions">
+        <button type="submit" class="btn">{{ 'Save Changes' if application else 'Add Application' }}</button>
+        <a class="btn btn-secondary" href="{{ url_for('applications.application_detail', id=application.id) if application else url_for('applications.list_applications') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

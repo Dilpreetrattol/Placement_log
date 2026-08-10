@@ -1,17 +1,51 @@
 {% extends "base.html" %}
-
-
+{% block title %}Companies — PlacementLog{% endblock %}
 {% block content %}
-    <h1>Companies
-    </h1>
-    <h2>
-        <a href="{{ url_for('companies.add_company') }}">Add Company</a>
-    </h2>
-        {% for company in companies %}
-            <p>name: <a href="{{ url_for('companies.company_detail', id=company.id) }}">{{ company.name }}</a>
-            </p>
-            <p>tier: {{company.tier}}</p>
-            <p>ctc_max: {{company.ctc_max}}</p>
-            <p>cgpa_cutoff: {{company.cgpa_cutoff}}</p>
-            {% endfor %}
+
+<div class="page-header">
+    <h1>Companies</h1>
+    <a class="btn" href="{{ url_for('companies.add_company') }}">+ Add Company</a>
+</div>
+
+{% if companies %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Tier</th>
+                    <th>CTC Range</th>
+                    <th>CGPA Cutoff</th>
+                    <th>Mode</th>
+                    <th>Applications</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                    <tr>
+                        <td><a href="{{ url_for('companies.company_detail', id=company.id) }}">{{ company.name }}</a></td>
+                        <td><span class="badge badge-neutral">{{ company.tier }}</span></td>
+                        <td>{{ company.ctc_min or 0 }}–{{ company.ctc_max or 0 }} LPA</td>
+                        <td>{{ company.cgpa_cutoff or '—' }}</td>
+                        <td>{{ company.mode or '—' }}</td>
+                        <td>{{ company.applications | length }}</td>
+                        <td class="actions-cell">
+                            <a class="btn btn-secondary btn-sm" href="{{ url_for('companies.edit_company', id=company.id) }}">Edit</a>
+                            <form class="inline-form" action="{{ url_for('companies.delete_company', id=company.id) }}" method="POST" onsubmit="return confirm('Delete {{ company.name }} and all its applications?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No companies added yet.</p>
+        <p><a href="{{ url_for('companies.add_company') }}">Add your first company</a> to start tracking.</p>
+    </div>
+{% endif %}
+
 {% endblock %}

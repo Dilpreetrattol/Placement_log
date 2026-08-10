@@ -1,37 +1,81 @@
 {% extends "base.html" %}
+{% block title %}{{ application.company.name }} Application — PlacementLog{% endblock %}
 {% block content %}
-<h1>Application Detail</h1>
 
-<div>
-    <p><strong>Company:</strong> {{ application.company.name }}</p>
-    <p><strong>Status:</strong> {{ application.current_status }}</p>
-    <p><strong>Date Applied:</strong> {{ application.date_applied }}</p>
-    <p><strong>Why I want this:</strong></p>
-    <p>{{ application.why_i_want_this }}</p>
-    <p><strong>Notes:</strong></p>
-    <p>{{ application.notes or 'No notes' }}</p>
+<div class="page-header">
+    <div>
+        <h1><a href="{{ url_for('companies.company_detail', id=application.company.id) }}">{{ application.company.name }}</a></h1>
+        {% set s = application.current_status %}
+        <span class="badge {{ 'badge-success' if s == 'Offer' else 'badge-danger' if s == 'Reject' else 'badge-info' }}">{{ s }}</span>
+    </div>
+    <div class="actions-cell">
+        <a class="btn btn-secondary" href="{{ url_for('applications.edit_application', id=application.id) }}">Edit</a>
+        <form class="inline-form" action="{{ url_for('applications.delete_application', id=application.id) }}" method="POST" onsubmit="return confirm('Delete this application and all its rounds?');">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
 </div>
 
-<hr>
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label">Date Applied</div>
+            <div class="value">{{ application.date_applied.strftime('%d %b %Y') if application.date_applied else '—' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label">Tier</div>
+            <div class="value">{{ application.company.tier }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label">CTC Range</div>
+            <div class="value">{{ application.company.ctc_min or 0 }}–{{ application.company.ctc_max or 0 }} LPA</div>
+        </div>
+    </div>
+    <div class="detail-item" style="margin-top: 8px;">
+        <div class="label">Why I want this</div>
+        <div class="value" style="font-weight: 400;">{{ application.why_i_want_this or '—' }}</div>
+    </div>
+    <div class="detail-item" style="margin-top: 16px;">
+        <div class="label">Notes</div>
+        <div class="value" style="font-weight: 400;">{{ application.notes or 'No notes' }}</div>
+    </div>
+</div>
 
-<h2>Rounds</h2>
-<a href="{{ url_for('rounds.add_round', application_id=application.id) }}">Add New Round</a>
+<div class="page-header" style="margin-top: 32px;">
+    <h2 style="margin: 0;">Rounds ({{ application.rounds | length }})</h2>
+    <a class="btn btn-secondary" href="{{ url_for('rounds.add_round', application_id=application.id) }}">+ Add Round</a>
+</div>
 
 {% if application.rounds %}
-    <ul>
-        {% for round in application.rounds %}
-            <li>
-                <strong>{{ round.round_type }}</strong> — {{ round.outcome }}
-                {% if round.round_date %} — {{ round.round_date }}{% endif %}
-                {% if round.performance_rating %} — Rating: {{ round.performance_rating }}{% endif %}
-                {% if round.topics_asked %} — Topics: {{ round.topics_asked }}{% endif %}
-                <form action="{{ url_for('rounds.delete_round', id=round.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    {% for round in application.rounds | sort(attribute='round_date') %}
+        <div class="round-item">
+            <div class="round-item-header">
+                <div>
+                    <strong>{{ round.round_type }}</strong>
+                    {% if round.round_date %}<span class="text-muted"> — {{ round.round_date.strftime('%d %b %Y') }}</span>{% endif %}
+                </div>
+                <div class="actions-cell">
+                    <span class="badge {{ 'badge-success' if round.outcome == 'Passed' else 'badge-danger' if round.outcome == 'Failed' else 'badge-warning' }}">{{ round.outcome }}</span>
+                    <form class="inline-form" action="{{ url_for('rounds.delete_round', id=round.id) }}" method="POST" onsubmit="return confirm('Delete this round?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% if round.performance_rating %}
+                <div class="rating-stars" style="margin-top: 8px;">{{ '★' * round.performance_rating }}{{ '☆' * (5 - round.performance_rating) }}</div>
+            {% endif %}
+            {% if round.topics_list() %}
+                <div class="topics-list">
+                    {% for topic in round.topics_list() %}
+                        <span class="topic-chip">{{ topic }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
 {% else %}
-    <p>No rounds added yet.</p>
+    <div class="empty-state">
+        <p>No rounds added yet.</p>
+    </div>
 {% endif %}
 {% endblock %}

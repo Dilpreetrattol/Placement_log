@@ -12,6 +12,7 @@ def add_round(application_id):
         round_type = request.form['round_type']
         round_date = request.form.get('round_date')
         performance_rating = request.form.get('performance_rating')
+        performance_rating = int(performance_rating) if performance_rating else None
         topics_asked = request.form.get('topics_asked')
         outcome = request.form['outcome']
 
