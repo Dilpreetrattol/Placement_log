@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: placementlog
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PLACEMENT_SEASON_START
+        value: 2026-08-01
+      - key: DATABASE_URL
+        sync: false
