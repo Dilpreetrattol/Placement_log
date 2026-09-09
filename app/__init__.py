@@ -6,7 +6,11 @@ db = SQLAlchemy()
 
 def create_app(config_name='default'):
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config[config_name])
+    selected_config = config[config_name]
+    app.config.from_object(selected_config)
+
+    if hasattr(selected_config, 'validate'):
+        selected_config.validate()
 
     db.init_app(app)
 

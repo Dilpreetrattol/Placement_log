@@ -15,8 +15,16 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '').replace(
-        'postgres://', 'postgresql://'  # Render gives postgres://, SQLAlchemy needs postgresql://
+        'postgres://', 'postgresql://'  # Render/Neon give postgres://, SQLAlchemy needs postgresql://
     )
+
+    @staticmethod
+    def validate():
+        if not os.environ.get('DATABASE_URL'):
+            raise RuntimeError(
+                'DATABASE_URL is not set. Set it to a Postgres connection string '
+                '(e.g. from Neon/Render) in the service environment variables.'
+            )
 
 class TestingConfig(Config):
     TESTING = True
